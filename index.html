@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contador de Horas de la Policía de la Ciudad</title>
+    <!-- Estilos de Bootstrap -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Fuente de Google (Roboto) -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            position: relative; /* Establece el cuerpo como relativo para que el contenedor de la imagen pueda posicionarse correctamente */
+        }
+        h1 {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        button {
+            font-size: 16px;
+            font-weight: 700;
+        }
+        table {
+            width: 100%;
+            margin-top: 20px;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 8px;
+            border: 1px solid #dee2e6;
+            text-align: left;
+        }
+        th {
+            background-color: #f8f9fa;
+            font-weight: 700;
+        }
+
+        /* Estilos específicos para la imagen de fondo */
+        .background-image-container {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%); /* Centra el contenedor */
+            width: 50%; /* Ajusta el tamaño del contenedor */
+            height: auto; /* Altura automática */
+            z-index: -1; /* Coloca el contenedor detrás de todo el contenido */
+            background-image: url('pdlc.png');
+            background-repeat: no-repeat;
+            background-size: auto; /* Mantiene el tamaño original de la imagen */
+            opacity: 0.5; /* Opacidad para crear el efecto de marca de agua */
+        }
+    </style>
+</head>
+<body>
+    <div class="background-image-container"></div>
+    <div class="container">
+        <h1 class="mt-5">Contador de horas de la Policía de la Ciudad</h1>
+        <form id="formTexto">
+            <div class="form-group">
+                <label for="texto">Ingrese los registros correspondientes:</label>
+                <textarea id="texto" name="texto" rows="3" class="form-control"></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">Procesar Texto</button>
+        </form>
+        <div id="resultado" class="mt-4"></div>
+    </div>
+
+    <!-- Scripts de Bootstrap y JavaScript -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        // Función para extraer y sumar los tiempos de servicio en minutos por identificador
+        function sumarTiemposPorIdentificador(texto) {
+            const bloques = texto.split(/\n(?=\bIdentifier: )/); // Separar bloques por identificador
+            const tiemposPorIdentificador = {};
+
+            for (const bloque of bloques) {
+                const identifierMatch = bloque.match(/Identifier: (.+)/);
+                const tiempoMatch = bloque.match(/Tiempo en Servicio: ((\d+) horas?, )?(\d+\.?\d*) (minutos|hora(s)?)/);
+
+                if (identifierMatch && tiempoMatch) {
+                    const identifier = identifierMatch[1];
+                    let horas = tiempoMatch[2] ? parseInt(tiempoMatch[2]) : 0;
+                    let minutos = parseFloat(tiempoMatch[3]);
+                    minutos += horas * 60; // Convertir horas a minutos
+
+                    if (!tiemposPorIdentificador[identifier]) {
+                        tiemposPorIdentificador[identifier] = 0;
+                    }
+                    tiemposPorIdentificador[identifier] += minutos;
+                }
+            }
+
+            return tiemposPorIdentificador;
+        }
+
+        document.getElementById("formTexto").addEventListener("submit", function(event) {
+            event.preventDefault();
+            const texto = document.getElementById("texto").value;
+            const tiemposPorIdentificador = sumarTiemposPorIdentificador(texto);
+            let resultadoHTML = "<p class='mb-0'>Tiempos totales acumulados por identificador:</p>";
+            resultadoHTML += "<table class='table mt-2'><thead><tr><th>#</th><th>Identifier</th><th>Tiempo en minutos</th><th>Tiempo en horas</th></tr></thead><tbody>";
+            
+            let contadorFilas = 1; // Variable para contar las filas
+
+            for (const identifier in tiemposPorIdentificador) {
+                const tiempoTotal = tiemposPorIdentificador[identifier];
+                const tiempoTotalHoras = Math.floor(tiempoTotal / 60);
+                const tiempoTotalMinutos = tiempoTotal % 60;
+                resultadoHTML += `<tr><td>${contadorFilas}</td><td>${identifier}</td><td>${tiempoTotal}</td><td>${tiempoTotalHoras} horas, ${tiempoTotalMinutos.toFixed(2)} minutos</td></tr>`;
+                contadorFilas++; // Incrementa el contador de filas
+            }
+
+            resultadoHTML += "</tbody></table>";
+            document.getElementById("resultado").innerHTML = resultadoHTML;
+        });
+    </script>
+</body>
+</html>
