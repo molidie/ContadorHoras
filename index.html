@@ -8,10 +8,13 @@
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <!-- Fuente de Google (Roboto) -->
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="icon" href="ROMAN.png" type="image/x-icon">
     <style>
         body {
             font-family: 'Roboto', sans-serif;
-            position: relative; /* Establece el cuerpo como relativo para que el contenedor de la imagen pueda posicionarse correctamente */
+            background-color: rgb(255, 165, 0); /* Color amarillo suave */
+            margin: 0; /* Elimina el margen predeterminado del cuerpo */
+            padding: 0; /* Elimina el relleno predeterminado del cuerpo */
         }
         h1 {
             font-size: 24px;
@@ -29,6 +32,7 @@
             width: 100%;
             margin-top: 20px;
             border-collapse: collapse;
+            background-color: #fff; /* Fondo blanco */
         }
         th, td {
             padding: 8px;
@@ -39,8 +43,6 @@
             background-color: #f8f9fa;
             font-weight: 700;
         }
-
-        /* Estilos específicos para la imagen de fondo */
         .background-image-container {
             position: fixed;
             top: 50%;
@@ -49,26 +51,59 @@
             width: 50%; /* Ajusta el tamaño del contenedor */
             height: auto; /* Altura automática */
             z-index: -1; /* Coloca el contenedor detrás de todo el contenido */
-            background-image: url('pdlc.png');
+            background-image: url('ROMAN.png');
             background-repeat: no-repeat;
             background-size: auto; /* Mantiene el tamaño original de la imagen */
             opacity: 0.5; /* Opacidad para crear el efecto de marca de agua */
+        }
+        /* Estilos CSS para el encabezado */
+        header {
+            background-color: rgb(255, 165, 0); /* Color de fondo amarillo suave */
+            display: flex; /* Utiliza el modelo de caja flexible */
+            justify-content: space-between; /* Distribuye los elementos a lo largo del contenedor */
+            align-items: center; /* Centra verticalmente los elementos */
+            padding: 20px 40px; /* Espaciado interno */
+        }
+
+        /* Estilos CSS para el título */
+        .header-title {
+            margin: 0; /* Elimina los márgenes */
+            font-size: 24px; /* Tamaño de fuente del título */
+            font-weight: 700; /* Peso de la fuente del título */
+        }
+
+        /* Estilos CSS para la imagen */
+        .header-image {
+            width: 250px; /* Ancho de la imagen */
+            height: auto; /* Altura automática para mantener la proporción */
         }
     </style>
 </head>
 <body>
     <div class="background-image-container"></div>
+
     <div class="container">
-        <h1 class="mt-5">Contador de horas de la Policía de la Ciudad</h1>
+        <header>
+            <!-- Título -->
+            <h1 class="header-title">Bienvenido a ZONASUR-RP | CONTADOR DE HORAS</h1>
+            <!-- Imagen -->
+            <img src="zonaSur.png" alt="Imagen Derecha" class="header-image">
+        </header>
         <form id="formTexto">
             <div class="form-group">
-                <label for="texto">Ingrese los registros correspondientes:</label>
-                <textarea id="texto" name="texto" rows="3" class="form-control"></textarea>
+                <label for="texto" class="font-weight-bold">Ingrese los registros correspondientes:</label>
+                <textarea id="texto" name="texto" rows="5" class="form-control"></textarea>
             </div>
             <button type="submit" class="btn btn-primary">Procesar Texto</button>
         </form>
         <div id="resultado" class="mt-4"></div>
     </div>
+
+    <footer class="footer mt-auto py-3">
+        <div class="container text-center">
+            <span class="text-muted">Powered by dieglock &reg;</span>
+        </div>
+    </footer>
 
     <!-- Scripts de Bootstrap y JavaScript -->
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
@@ -104,8 +139,8 @@
             event.preventDefault();
             const texto = document.getElementById("texto").value;
             const tiemposPorIdentificador = sumarTiemposPorIdentificador(texto);
-            let resultadoHTML = "<p class='mb-0'>Tiempos totales acumulados por identificador:</p>";
-            resultadoHTML += "<table class='table mt-2'><thead><tr><th>#</th><th>Identifier</th><th>Tiempo en minutos</th><th>Tiempo en horas</th></tr></thead><tbody>";
+            let resultadoHTML = "<p class='mb-0 font-weight-bold'>Total de horas en servicio según Identifier:</p>";
+            resultadoHTML += "<table class='table mt-2'><thead class='thead-dark'><tr><th>#</th><th>Identifier</th><th>Tiempo en minutos</th><th>Tiempo en horas</th></tr></thead><tbody>";
             
             let contadorFilas = 1; // Variable para contar las filas
 
