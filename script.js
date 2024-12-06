@@ -1,45 +1,114 @@
-// Función para extraer el identificador y el tiempo de servicio de un bloque de texto
-function extraerInfo(bloqueTexto) {
-    const identifierMatch = bloqueTexto.match(/Identifier: (.+)/);
-    const tiempoMatch = bloqueTexto.match(/Tiempo en Servicio: (.+)/);
+function calcularTiempoServicio() {
+    const logInput = document.getElementById("logInput").value;
+    const resultadosTable = document.getElementById("resultados");
+    resultadosTable.innerHTML = "";
 
-    if (identifierMatch && tiempoMatch) {
-        const identifier = identifierMatch[1];
-        const tiempo = tiempoMatch[1];
-        return { identifier, tiempo };
-    } else {
-        return { identifier: null, tiempo: null };
+    const registros = {};
+    const regex = /(\w+ \w+) \[steam:([^\]]+)\]\s+Hora de Entrada: (.+?)\s+\(ART\)\s+Hora de Salida: (.+?)\s+\(ART\)/g;
+    let match;
+
+    while ((match = regex.exec(logInput)) !== null) {
+        const nombre = match[1];
+        const steamId = `${match[2]}`;
+        const horaEntradaTexto = match[3];
+        const horaSalidaTexto = match[4];
+
+        const horaEntrada = convertirFecha(horaEntradaTexto);
+        const horaSalida = convertirFecha(horaSalidaTexto);
+
+        if (horaEntrada && horaSalida) {
+            const diferenciaMs = horaSalida - horaEntrada;
+            const horas = Math.floor(diferenciaMs / (1000 * 60 * 60));
+            const minutos = Math.floor((diferenciaMs % (1000 * 60 * 60)) / (1000 * 60));
+            const segundos = Math.floor((diferenciaMs % (1000 * 60)) / 1000);
+
+            if (!registros[steamId]) {
+                registros[steamId] = {
+                    nombre: nombre,
+                    horas: 0,
+                    minutos: 0,
+                    segundos: 0
+                };
+            }
+
+            registros[steamId].horas += horas;
+            registros[steamId].minutos += minutos;
+            registros[steamId].segundos += segundos;
+        }
     }
+
+    for (const steamId in registros) {
+        let { horas, minutos, segundos } = registros[steamId];
+
+        minutos += Math.floor(segundos / 60);
+        segundos = segundos % 60;
+        horas += Math.floor(minutos / 60);
+        minutos = minutos % 60;
+
+        const nuevaFila = document.createElement("tr");
+        nuevaFila.innerHTML = `
+            <td>${registros[steamId].nombre}</td>
+            <td>${steamId}</td>
+            <td>${horas}h ${minutos}m ${segundos}s</td>
+        `;
+        resultadosTable.appendChild(nuevaFila);
+    }
+
+    // Habilitar el botón de guardar datos
+    document.getElementById("submitBtn").disabled = false;
 }
 
-// Función para convertir los minutos a horas y minutos
-function minutosAHoras(minutos) {
-    const horas = Math.floor(minutos / 60);
-    const minutosRestantes = minutos % 60;
-    return `${horas} horas, ${minutosRestantes} minutos`;
+function convertirFecha(textoFecha) {
+    const [diaSemana, mes, dia, at, hora, min, ampm] = textoFecha.split(/[\s:]+/);
+
+    let hora24 = parseInt(hora);
+    if (ampm === "PM" && hora24 < 12) hora24 += 12;
+    if (ampm === "AM" && hora24 === 12) hora24 = 0;
+
+    const fecha = new Date();
+    fecha.setFullYear(new Date().getFullYear());
+    fecha.setMonth(["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"].indexOf(mes));
+    fecha.setDate(parseInt(dia));
+    fecha.setHours(hora24);
+    fecha.setMinutes(parseInt(min));
+    fecha.setSeconds(0);
+    fecha.setMilliseconds(0);
+
+    return fecha;
 }
 
-// Función principal para procesar el bloque de texto
-function procesarBloqueTexto(bloqueTexto) {
-    const { identifier, tiempo } = extraerInfo(bloqueTexto);
-    if (identifier && tiempo) {
-        const tiempoMinutos = tiempoAMinutos(tiempo);
-        const tiempoEnHoras = minutosAHoras(tiempoMinutos);
-        return { identifier, tiempoEnHoras };
-    } else {
-        return { identifier: null, tiempoEnHoras: null };
-    }
-}
+function guardarDatos() {
+    // Lógica para guardar datos en la API
+    const resultados = [];
+    const filas = document.querySelectorAll("#resultados tr");
+    
+    filas.forEach(fila => {
+        const celdas = fila.querySelectorAll("td");
+        const nombre = celdas[0].innerText;
+        const steamId = celdas[1].innerText;
+        const tiempo = celdas[2].innerText;
 
-document.getElementById("formTexto").addEventListener("submit", function(event) {
-    event.preventDefault();
-    const texto = document.getElementById("texto").value;
-    const { identifier, tiempoEnHoras } = procesarBloqueTexto(texto);
-    if (identifier && tiempoEnHoras) {
-        const resultadoHTML = `<p>Identifier: ${identifier}</p><p>Tiempo en horas: ${tiempoEnHoras}</p>`;
-        document.getElementById("resultado").innerHTML = resultadoHTML;
-        // Aquí puedes agregar la lógica para enviar los datos a la base de datos
-    } else {
-        document.getElementById("resultado").innerHTML = "<p>No se pudo extraer la información.</p>";
-    }
-});
+        resultados.push({
+            nombre: nombre,
+            steamId: steamId,
+            tiempo: tiempo
+        });
+    });
+
+    // Enviar datos a la API usando fetch
+    fetch('URL_DE_TU_API', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(resultados)
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log('Datos guardados:', data);
+        // Aquí puedes manejar la respuesta de la API
+    })
+    .catch(error => {
+        console.error('Error al guardar los datos:', error);
+    });
+}

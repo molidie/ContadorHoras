@@ -1,0 +1,109 @@
+/* Reset básico */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #1f2937; /* Fondo oscuro similar a ChatGPT */
+    color: #e5e7eb; /* Texto gris claro */
+    display: flex;
+    flex-direction: column; /* Asegura que el contenido esté en columna */
+    min-height: 100vh; /* Se asegura de que el body ocupe toda la altura */
+}
+
+.container {
+    flex: 1; /* Permite que el contenedor principal ocupe el espacio disponible */
+    width: 90%;
+    max-width: 800px;
+    background-color: #111827;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.3);
+    margin: 1rem auto; /* Centramos el contenedor */
+}
+
+h1 {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+    color: #10b981; /* Verde similar a ChatGPT */
+    text-align: center;
+}
+textarea {
+    width: 100%;
+    padding: 1.5rem; /* Aumentado desde 1rem a 1.5rem para más altura */
+    border: none;
+    border-radius: 5px;
+    resize: vertical;
+    background-color: #374151;
+    color: #e5e7eb;
+    margin-bottom: 1rem;
+    font-size: 1rem;
+    height: 200px; /* Agregado para establecer una altura fija */
+}
+
+
+button {
+    width: 100%;
+    padding: 0.75rem;
+    border: none;
+    border-radius: 5px;
+    background-color: #10b981;
+    color: #fff;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-bottom: 1rem;
+}
+
+button:hover {
+    background-color: #059669;
+}
+
+.table-container {
+    overflow-x: auto; /* Permite desplazamiento horizontal en tablas grandes */
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+    background-color: #1f2937;
+}
+
+th, td {
+    padding: 0.75rem;
+    text-align: left;
+    border-bottom: 1px solid #374151;
+    color: #e5e7eb;
+}
+
+th {
+    background-color: #107bb9;
+    color: #fff;
+    font-weight: bold;
+}
+
+td {
+    background-color: #1f2937;
+}
+
+tr:nth-child(even) td {
+    background-color: #2d3748;
+}
+
+tr:last-child td {
+    border-bottom: none;
+}
+
+footer {
+    text-align: center;
+    margin-top: 1rem; /* Espacio entre el contenido y el pie de página */
+    padding: 1rem 0; /* Espaciado arriba y abajo */
+    background-color: #111827; /* Fondo del pie de página */
+    color: #9ca3af; /* Color del texto del pie de página */
+    width: 100%; /* Asegura que el pie ocupe todo el ancho */
+}

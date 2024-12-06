@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro de Horas de Servicio</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Registro de Horas de Servicio</h1>
+        <textarea id="logInput" placeholder="Pega aquí los registros del bot..."></textarea>
+        <button onclick="calcularTiempoServicio()">Calcular Tiempo de Servicio</button>
+        
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Steam ID</th>
+                        <th>Tiempo en Servicio</th>
+                    </tr>
+                </thead>
+                <tbody id="resultados"></tbody>
+            </table>
+        </div>
+        <br>
+        <!--
+        <button id="submitBtn" onclick="guardarDatos()" disabled>Guardar Datos</button>
+        -->
+    </div>
+    <footer>
+        <p>Powered by 🐐 Dieglock</p>
+    </footer>
+    <script src="script.js"></script>
+</body>
+</html>
